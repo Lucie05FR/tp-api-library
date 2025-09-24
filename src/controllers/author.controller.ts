@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Route, Path, Body, Tags, Patch } from "t
 import { authorService } from "../services/author.service";
 import { AuthorDTO } from "../dto/author.dto";
 import { Author } from "../models/author.model";
+import { CustomError } from "../middlewares/errorHandler";
 
 @Route("authors")
 @Tags("Authors")
@@ -14,8 +15,15 @@ export class AuthorController extends Controller {
 
   // Récupère un auteur par ID
   @Get("{id}")
-  public async getAuthorById(@Path() id: number): Promise<AuthorDTO | null> {
-    return authorService.getAuthorById(id);
+  public async getAuthorById(@Path() id: number): Promise<AuthorDTO> {
+    let author: Author | null = await authorService.getAuthorById(id);
+    if(author === null) {
+      let error: CustomError = new Error("Author not found");
+      error.status = 404;
+      throw error;
+    } else {
+      return author;
+    }
   }
 
   // Crée un nouvel auteur
@@ -24,6 +32,11 @@ export class AuthorController extends Controller {
     @Body() requestBody: AuthorDTO
   ): Promise<AuthorDTO> {
     const { firstName, lastName } = requestBody;
+    if(!firstName || !lastName) {
+      let error: CustomError = new Error("First name and last name are required");
+      error.status = 400;
+      throw error;
+    }
     return authorService.createAuthor(firstName, lastName);
   }
 
@@ -38,8 +51,22 @@ export class AuthorController extends Controller {
   public async updateAuthor(
     @Path() id: number,
     @Body() requestBody: AuthorDTO
-  ): Promise<AuthorDTO | null> {
+  ): Promise<AuthorDTO> {
     const { firstName, lastName } = requestBody;
-    return authorService.updateAuthor(id, firstName, lastName);
+
+    if(!firstName || !lastName) {
+      let error: CustomError = new Error("First name and last name are required");
+      error.status = 400;
+      throw error;
+    }
+
+    let author = await authorService.updateAuthor(id, firstName, lastName)
+    if(author === null){
+      let error: CustomError = new Error("Author not found");
+      error.status = 404;
+      throw error;
+    } else {
+      return author;
+    }
   }
 }

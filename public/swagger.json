@@ -20,10 +20,6 @@
 						"type": "string"
 					}
 				},
-				"required": [
-					"firstName",
-					"lastName"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -67,31 +63,6 @@
 		"contact": {}
 	},
 	"paths": {
-		"/books": {
-			"get": {
-				"operationId": "GetAllBooks",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/BookDTO"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Books"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
 		"/authors": {
 			"get": {
 				"operationId": "GetAllAuthors",
@@ -156,12 +127,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/AuthorDTO"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/AuthorDTO"
 								}
 							}
 						}
@@ -214,12 +180,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/AuthorDTO"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/AuthorDTO"
 								}
 							}
 						}
@@ -250,6 +211,93 @@
 						}
 					}
 				}
+			}
+		},
+		"/books": {
+			"get": {
+				"operationId": "GetAllBooks",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/BookDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Books"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateBook",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BookDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Books"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/BookDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/books/{id}": {
+			"get": {
+				"operationId": "GetBoodById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/BookDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Books"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		}
 	},
