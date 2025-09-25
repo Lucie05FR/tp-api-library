@@ -30,6 +30,7 @@
     "@tsoa/runtime": "^6.4.0",
     "express": "^4.21.0",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",

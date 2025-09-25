@@ -4,6 +4,7 @@ import { AuthorController } from "../controllers/author.controller";
 import { AuthorService } from "./author.service";
 import { CustomError } from "../middlewares/errorHandler";
 import e from "express";
+import { BookCopy } from "../models/bookCopy.model";
 
 export class BookService {
 
@@ -47,10 +48,10 @@ export class BookService {
 
   // Met à jour un livre
   public async updateBook(
-    id: number, 
-    title: string, 
-    publishYear: number, 
-    authorId: number, 
+    id: number,
+    title: string,
+    publishYear: number,
+    authorId: number,
     isbn: string
   ): Promise<Book> {
     let book = await this.getBookById(id);
@@ -83,6 +84,26 @@ export class BookService {
       }
       await book.save();
       return book;
+    }
+  }
+
+  // Vérifie que le livre n'est pas rattaché à un Book Copy
+  public async hasBookCopy(bookId: number): Promise<boolean> {
+    const cpt = await BookCopy.count({
+      include: [{
+        model: BookCopy,
+        as: 'book',
+        where: { bookId }
+      }]
+    });
+    return cpt > 0;
+  }
+
+  // Supprime un livre par ID
+  public async deleteBook(id: number): Promise<void> {
+    const book = await Book.findByPk(id);
+    if (book) {
+      await book.destroy();
     }
   }
 }

@@ -1,4 +1,6 @@
 import { Author } from "../models/author.model";
+import { Book } from "../models/book.model";
+import { BookCopy } from "../models/bookCopy.model";
 
 export class AuthorService {
   // Récupère tous les auteurs
@@ -17,6 +19,18 @@ export class AuthorService {
     lastName: string
   ): Promise<Author> {
     return Author.create({ firstName: firstName, lastName: lastName });
+  }
+
+  // Vérifie que l'auteur n'est pas rattaché à un Book Copy
+  public async hasBookCopy(authorId: number): Promise<boolean> {
+    const cpt = await BookCopy.count({
+      include: [{
+        model: BookCopy,
+        as: 'book',
+        where: { authorId }
+      }]
+    });
+    return cpt > 0;
   }
 
   // Supprime un auteur par ID
@@ -41,6 +55,16 @@ export class AuthorService {
       return author;
     }
     return null;
+  }
+
+  public async getBooksAuthor(id: number): Promise<Book[] | null> {
+    const author = Author.findByPk(id);
+    const books = await Book.findAll({
+      where: {
+        authorId: id
+      }
+    });
+    return books;
   }
 }
 
