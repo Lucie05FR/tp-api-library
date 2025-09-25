@@ -31,8 +31,8 @@ export class BookController extends Controller {
   @Post("/")
   public async createBook(@Body() requestBody: BookDTO): Promise<BookDTO> {
     let { title, publishYear, author, isbn } = requestBody;
-    
-    if(author?.id === undefined) {
+
+    if (author?.id === undefined) {
       let error: CustomError = new Error("Author ID is required to create a book");
       error.status = 400;
       throw error;
@@ -41,20 +41,19 @@ export class BookController extends Controller {
   }
 
   // Met à jour un livre par ID
-  // @Patch("{id}")
-  // public async updateBook(
-  //   @Path() id: number,
-  //   @Body() requestBody: BookDTO
-  // ): Promise<BookDTO> {
-  //   const { title, publishYear, author, isbn } = requestBody;
+  @Patch("{id}")
+  public async updateBook(
+    @Path() id: number,
+    @Body() requestBody: BookDTO
+  ): Promise<BookDTO> {
+    let { title, publishYear, author, isbn } = requestBody;
 
-  //   let book = await bookService.updateBook(title, publishYear, author, isbn)
-  //   if (book === null) {
-  //     let error: CustomError = new Error("Book not found");
-  //     error.status = 404;
-  //     throw error;
-  //   } else {
-  //     return book;
-  //   }
-  // }
+    if (author?.id === undefined) {
+      let error: CustomError = new Error("Author ID is required to update a book");
+      error.status = 400;
+      throw error;
+    }
+
+    return bookService.updateBook(id, title, publishYear, author?.id, isbn);
+  }
 }

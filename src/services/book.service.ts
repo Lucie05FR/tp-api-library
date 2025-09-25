@@ -46,21 +46,45 @@ export class BookService {
   }
 
   // Met à jour un livre
-  // public async updateBook(
-  //   title: string,
-  //   publishYear: number,
-  //   authorId: number,
-  //   isbn: string
-  // ): Promise<Book | null> {
-  //   const book = await Book.findByPk(id);
-  //   if (author) {
-  //     if (firstName) author.firstName = firstName;
-  //     if (lastName) author.lastName = lastName;
-  //     await book.save();
-  //     return book;
-  //   }
-  //   return null;
-  // }
+  public async updateBook(
+    id: number, 
+    title: string, 
+    publishYear: number, 
+    authorId: number, 
+    isbn: string
+  ): Promise<Book> {
+    let book = await this.getBookById(id);
+    if (book === null) {
+      // Cette erreur pourrait être levée directement dans le contrôleur pour garder une cohérence de code
+      // Possibilité de gérer les erreurs dans le contrôleur ou le service selon les choix de développement
+      let error: CustomError = new Error(`Book ${id} not found`);
+      error.status = 404;
+      throw error;
+    } else {
+      if (authorId !== undefined) {
+        let author = await this.authorService.getAuthorById(authorId);
+        if (author === null) {
+          let error: CustomError = new Error(`Author ${authorId} not found`);
+          error.status = 404;
+          throw error;
+        }
+      }
+
+      if (title !== undefined) {
+        book.title = title;
+      }
+
+      if (publishYear !== undefined) {
+        book.publishYear = publishYear;
+      }
+
+      if (isbn !== undefined) {
+        book.isbn = isbn;
+      }
+      await book.save();
+      return book;
+    }
+  }
 }
 
 export const bookService = new BookService();
